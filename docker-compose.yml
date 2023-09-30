@@ -3,6 +3,7 @@ version: '3'
 services:
   app:
     image: 'abhisheksr01/python-postgres-azure:0.0.1'
+    restart: on-failure
     build:
       context: .
     container_name: app
@@ -25,3 +26,4 @@ services:
       - POSTGRES_PASSWORD=secret
     volumes:
       - ./db/:/opt/
+      - ./scripts/upload.sh:/opt/upload.sh
