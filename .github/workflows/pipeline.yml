@@ -34,3 +34,6 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt.lock
+
+      - name: Check Formatting and linting
+        run: black ./ --check && flake8
