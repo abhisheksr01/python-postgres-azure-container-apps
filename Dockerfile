@@ -2,11 +2,11 @@ FROM python:3.9-buster
 
 WORKDIR /app
 
-COPY ./rates/requirements.txt /app
+COPY ./rates/requirements.txt.lock /app
 
 # Install Gunicorn and any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir gunicorn && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt.lock
 
 COPY ./rates /app
 # Make port 8000 available to the world outside this container
