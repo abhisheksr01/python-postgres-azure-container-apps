@@ -12,9 +12,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - name=postgres
-      - password=secret
       - host=db
+      - name=postgres
       - dbname=postgres
 
   db:
@@ -23,7 +22,7 @@ services:
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=secret
+      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - ./db/:/opt/
       - ./scripts/upload.sh:/opt/upload.sh

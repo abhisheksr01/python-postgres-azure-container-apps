@@ -1,6 +1,6 @@
+import os
 DB = {
-    "name": "postgres",
-    "user": "postgres",
-    "password": "secret",
-    "host": "db"
+    "name": str(os.getenv("name", "postgres")),
+    "user": str(os.getenv("user", "postgres")),
+    "host": str(os.getenv("host", "localhost"))
 }
