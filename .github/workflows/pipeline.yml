@@ -87,4 +87,4 @@ jobs:
         run: pip install safety
 
       - name: Safety Check
-        run: safety check --full-report
+        run: safety check --file requirements.txt.lock --full-report
