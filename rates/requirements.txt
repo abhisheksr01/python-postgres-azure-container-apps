@@ -2,3 +2,4 @@ psycopg2-binary
 Flask
 black
 flake8
+bandit
