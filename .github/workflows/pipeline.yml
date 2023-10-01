@@ -36,4 +36,4 @@ jobs:
         run: pip install -r requirements.txt.lock
 
       - name: Check Formatting and linting
-        run: black ./ --check && flake8
+        run: black ./ --check && flake8 --exclude ./venv/
