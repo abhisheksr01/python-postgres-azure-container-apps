@@ -15,9 +15,6 @@ permissions:
 jobs:
   linting:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: rates
     steps:
       - uses: actions/checkout@v3
 
@@ -27,16 +24,11 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
 
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-
       - name: Install dependencies
-        run: pip install -r requirements.txt.lock
+        run: pip install black flake8
 
       - name: Check Formatting and linting
-        run: black ./ --check && flake8 --exclude ./venv/
+        run: black ./ --check && flake8
 
   static-code-analysis:
     runs-on: ubuntu-latest
@@ -50,11 +42,6 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
-
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
 
       - name: Install dependencies
         run: pip install bandit
@@ -77,11 +64,6 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
-
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
 
       - name: Install dependencies
         run: pip install safety
