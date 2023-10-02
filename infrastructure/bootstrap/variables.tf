@@ -1,19 +1,3 @@
-variable "subscription_id" {
-  type = string
-}
-
-variable "tenant_id" {
-  type = string
-}
-
-variable "client_id" {
-  type = string
-}
-
-variable "oidc_request_token" {}
-
-variable "oidc_request_url" {}
-
 variable "resource_name_prefix" {
   type = string
 }

@@ -15,7 +15,3 @@ resource "azurerm_storage_container" "infrabackend" {
   storage_account_name  = azurerm_storage_account.infrabackend.name
   container_access_type = "private"
 }
-
-resource "random_id" "storage_account_name_unique" {
-  byte_length = 1
-}
