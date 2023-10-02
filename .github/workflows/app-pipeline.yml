@@ -10,6 +10,7 @@ on:
     paths:
       - "**"
       - "!infrastructure/**"
+      - "!.github/workflows/infra-pipeline.yml"
   workflow_dispatch:
 
 permissions:
