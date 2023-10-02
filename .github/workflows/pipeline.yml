@@ -171,14 +171,13 @@ jobs:
       - name: Build Docker Image
         run: |
           echo "The current tag as per the function is ${{ steps.meta.outputs.tags }}"
-          echo ${{ steps.meta.outputs.tags }}
-          echo "label"
-          echo ${{ steps.meta.outputs.labels }}
-          docker build -t ${{ secrets.CONTAINER_REGISTRY }}/${{ github.repository }}:0.0.1 .
+          docker build -t abhisheksr01/postgres-azure .
+          echo "docker image built successfully"
+          docker build -t "${{ secrets.CONTAINER_REGISTRY }}/${{ github.repository }}:${{ github.run_id }}" .
       
       - name: Scan Docker Image Vulnerabilities
         run: |
-          docker scout cves ${{ secrets.CONTAINER_REGISTRY }}/${{ github.repository }}:0.0.1
+          docker scout cves "${{ secrets.CONTAINER_REGISTRY }}/${{ github.repository }}:${{ github.run_id }}"
       
       # - name: Push Docker Image
       #   run: |
