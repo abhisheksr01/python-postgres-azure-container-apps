@@ -1,0 +1,97 @@
+name: Pipeline to automatically deploy Terraform Infrastructure
+
+env:
+  PYTHON_VERSION: "3.11"
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "infrastructure"
+      - ".github/workflows/infra-pipeline.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # This is required for requesting the JWT
+
+jobs:
+  run-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZ_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZ_TENANT_ID }}
+          subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: 1.21.0
+
+      - name: Download Go modules
+        run: go mod download
+        working-directory: infrastructure/bootstrap/tests/unit
+
+      - name: Run Unit Terratest (via Go)
+        run: go test -timeout 5m
+        working-directory: infrastructure/bootstrap/tests/unit
+
+  terraform-compliance:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infrastructure/bootstrap
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python version
+        uses: actions/setup-python@v3.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install terraform terraform-compliance
+        run: |
+          pip install terraform-compliance
+
+      - uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZ_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZ_TENANT_ID }}
+          subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      - name: Terraform Init and Plan
+        run: |
+          terraform init -backend-config=./backend-config.hcl && terraform plan -out plan
+
+      - name: Terraform Compliance
+        run: |
+          terraform-compliance -f tests/compliance -p plan
+
+  tf-code-lint-and-sast:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infrastructure/bootstrap
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install TFSec
+        uses: aquasecurity/tfsec-action@v4.0.0
+      
+      - name: TF Static Code Analysis
+        run: tfsec .
+
+      - name: Install TFLint
+        uses: terraform-linters/setup-tflint@v3
+
+      - name: Lint TF code
+        run: tflint --chdir ./
