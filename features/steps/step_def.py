@@ -19,4 +19,4 @@ def step_impl(context, expectedresponse):
     expected_greeting = json.loads(expectedresponse)
     assert (
         context.response.json() == expected_greeting
-    ), f"The expected response do not match, Expected: {expected_greeting} Actual: {context.response.json()}"
+    ), f"The response do not match, Expected: {expected_greeting} Actual: {context.response.json()}"

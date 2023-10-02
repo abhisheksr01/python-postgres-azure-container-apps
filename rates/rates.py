@@ -73,8 +73,7 @@ def create_app():
         if not date_from or not date_to:
             raise BadRequest("Invalid date arguments")
         if orig_code and dest_code:
-            return get_rates_using_codes
-        (date_from, date_to, orig_code, dest_code)
+            return get_rates_using_codes(date_from, date_to, orig_code, dest_code)
         raise BadRequest("Invalid location arguments")
 
     def get_rates_using_codes(date_from, date_to, orig_code, dest_code):
