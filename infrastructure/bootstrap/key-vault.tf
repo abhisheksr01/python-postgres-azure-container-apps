@@ -5,6 +5,7 @@ resource "azurerm_key_vault" "vault" {
   tenant_id                  = data.azurerm_client_config.current.tenant_id
   sku_name                   = var.sku_name
   soft_delete_retention_days = 7
+  purge_protection_enabled   = true
 
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
@@ -12,6 +13,11 @@ resource "azurerm_key_vault" "vault" {
 
     key_permissions    = var.key_permissions
     secret_permissions = var.secret_permissions
+  }
+
+  network_acls {
+    bypass         = "AzureServices"
+    default_action = "Deny"
   }
 
   tags = var.default_tags

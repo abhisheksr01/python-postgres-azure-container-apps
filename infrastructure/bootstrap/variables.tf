@@ -1,3 +1,19 @@
+variable "subscription_id" {
+  type = string
+}
+
+variable "tenant_id" {
+  type = string
+}
+
+variable "client_id" {
+  type = string
+}
+
+variable "oidc_request_token" {}
+
+variable "oidc_request_url" {}
+
 variable "resource_name_prefix" {
   type = string
 }
@@ -68,4 +84,19 @@ variable "default_tags" {
     Provisioner = "Terraform"
     CostCode    = "100-101" # Random value very useful for billing purposes.
   }
+}
+
+variable "githubactions_oidc" {
+  description = "Github OIDC Config for the service principal connection"
+  type = object({
+    description = string
+    audiences   = list(string)
+    issuer      = string
+    subject     = string
+  })
+}
+
+variable "role_assigned" {
+  description = "role assinged to the github oidc connection"
+  type        = string
 }

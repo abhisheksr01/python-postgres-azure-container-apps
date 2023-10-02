@@ -1,5 +1,4 @@
 Feature: Tags
-	related_resources: azurerm_storage_account
 
   Scenario: Ensure all resources have tags
     Given I have resource that supports tags defined
