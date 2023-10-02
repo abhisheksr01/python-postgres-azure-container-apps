@@ -111,7 +111,7 @@ jobs:
       - name: Run Behave BDD Tests
         run: |
           make start-app-db
-          pip install Behave
+          pip install behave requests
           echo "****** Running behave tests ******"
           behave
           make stop-app-db
