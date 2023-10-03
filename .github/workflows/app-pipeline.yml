@@ -194,5 +194,5 @@ jobs:
           resourceGroup: "python-postgres-azure-app-rg"
           registryUsername: ${{ secrets.DOCKERHUB_USERNAME }}
           registryPassword: ${{ secrets.DOCKERHUB_TOKEN }}
-          containerAppName: managedEnvironment-pythonpostgresa-a599
+          containerAppName: dfsdfs
           imageToDeploy: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.run_id }}
