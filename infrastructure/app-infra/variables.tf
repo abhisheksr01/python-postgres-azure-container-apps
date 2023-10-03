@@ -58,7 +58,7 @@ variable "app_container_config" {
   })
 
   default = {
-    name          = "python=postgres-azure-app"
+    name          = "python-postgres-azure-app"
     revision_mode = "Single"
     memory        = "0.5Gi"
     cpu           = 0.25
