@@ -19,7 +19,7 @@ module "container-apps" {
             name   = var.app_container_config["name"]
             memory = var.app_container_config["memory"]
             cpu    = var.app_container_config["cpu"]
-            image  = "${var.registry_url}/${var.app_container_config["image"]}"
+            image  = "${var.registry_url}/${var.image}"
             env    = var.app_container_config["environment_variables"],
 
           }

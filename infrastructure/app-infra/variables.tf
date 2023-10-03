@@ -17,6 +17,12 @@ variable "registry_url" {
   default = "registry.hub.docker.com"
 }
 
+variable "image" {
+  type    = string
+  default = "abhisheksr01/zero-2-hero-python-flask-microservice:95"
+}
+
+
 variable "subnet_config" {
   type = set(object({
     name    = string
@@ -39,7 +45,6 @@ variable "app_container_config" {
     revision_mode = string
     memory        = string
     cpu           = number
-    image         = string
     ingress = object({
       allow_insecure_connections = bool
       external_enabled           = bool
@@ -57,7 +62,6 @@ variable "app_container_config" {
     revision_mode = "Single"
     memory        = "0.5Gi"
     cpu           = 0.25
-    image         = "abhisheksr01/zero-2-hero-python-flask-microservice:95"
     ingress = {
       allow_insecure_connections = false
       external_enabled           = true
