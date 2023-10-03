@@ -168,3 +168,4 @@ Instructions.md
 .terraform.lock.hcl
 terraform.tfstate
 terraform.tfstate.*
+**/plan
