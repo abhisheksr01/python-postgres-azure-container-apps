@@ -30,11 +30,11 @@ variable "subnet_config" {
   }))
   default = [{
     name    = "subnet1-public"
-    iprange = ["10.0.0.0/25"]
+    iprange = ["10.0.0.0/23"]
     },
     {
       name    = "subnet1-private"
-      iprange = ["10.0.0.128/25"]
+      iprange = ["10.0.2.0/23"]
     }
   ]
 }
