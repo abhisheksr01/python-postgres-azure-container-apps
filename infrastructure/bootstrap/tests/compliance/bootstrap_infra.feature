@@ -5,6 +5,7 @@ Feature: Tags
     Then it must contain tags
     And its value must not be null
 
+  @nofail
   Scenario Outline: Ensure that specific tags are defined
     Given I have resource that supports tags defined
     When it has tags

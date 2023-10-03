@@ -70,6 +70,13 @@ variable "default_tags" {
   }
 }
 
+variable "default_set_tags" {
+  type = set(string)
+  default = [
+    "Owner=Abhishek"
+  ]
+}
+
 variable "githubactions_oidc" {
   description = "Github OIDC Config for the service principal connection"
   type = object({

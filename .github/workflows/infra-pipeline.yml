@@ -1,4 +1,4 @@
-name: Pipeline to automatically deploy Terraform Infrastructure
+name: bootstrap-infrastructure
 
 env:
   PYTHON_VERSION: "3.11"
@@ -49,12 +49,14 @@ jobs:
           go-version: 1.21.0
 
       - name: Download Go modules
-        run: go mod download
-        working-directory: tests/unit
+        run: |
+          cd tests/unit
+          go mod download
 
-      - name: Run Unit Terratest (via Go)
-        run: go test -timeout 5m
-        working-directory: tests/unit
+      - name: Run Terratest Unit Test (via Go)
+        run: |
+          cd tests/unit
+          go test -timeout 5m
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
@@ -134,3 +136,6 @@ jobs:
 
       - name: Lint TF code
         run: tflint --chdir ./
+
+      - name: Check TF code fmt and validation
+        run: terraform fmt --diff --check --recursive && terraform validate
