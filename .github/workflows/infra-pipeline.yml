@@ -18,6 +18,9 @@ permissions:
 jobs:
   run-unit-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infrastructure/bootstrap
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,18 +31,30 @@ jobs:
           client-id: ${{ secrets.AZ_CLIENT_ID }}
           tenant-id: ${{ secrets.AZ_TENANT_ID }}
           subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
-
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+      
+      - name: Terraform Init
+        id: init
+        run: terraform init -backend-config=./backend-config.hcl
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
+          ARM_USE_OIDC: true
+          
       - uses: actions/setup-go@v4
         with:
           go-version: 1.21.0
 
       - name: Download Go modules
         run: go mod download
-        working-directory: infrastructure/bootstrap/tests/unit
+        working-directory: tests/unit
 
       - name: Run Unit Terratest (via Go)
         run: go test -timeout 5m
-        working-directory: infrastructure/bootstrap/tests/unit
+        working-directory: tests/unit
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
@@ -77,7 +92,7 @@ jobs:
       
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: terraform init -backend-config=./backend-config.hcl
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -86,7 +101,7 @@ jobs:
 
       - name: Terraform Plan
         run: |
-          terraform init -backend-config=./backend-config.hcl && terraform plan -out plan
+          terraform plan -out plan
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
