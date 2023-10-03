@@ -2,7 +2,9 @@ resource "azuread_application" "python_postgres_azure_app" {
   display_name = "${var.resource_name_prefix}-github-oidc"
   owners       = [data.azuread_client_config.current.object_id]
   tags         = var.default_set_tags
-
+    lifecycle {
+    ignore_changes = [owners]
+  }
 }
 
 resource "azuread_service_principal" "python_postgres_azure_app" {
@@ -10,6 +12,9 @@ resource "azuread_service_principal" "python_postgres_azure_app" {
   app_role_assignment_required = false
   owners                       = [data.azuread_client_config.current.object_id]
   tags                         = var.default_set_tags
+  lifecycle {
+    ignore_changes = [owners]
+  }
 }
 
 resource "azurerm_role_assignment" "python_postgres_azure_app" {

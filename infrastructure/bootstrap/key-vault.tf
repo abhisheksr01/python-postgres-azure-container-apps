@@ -21,6 +21,10 @@ resource "azurerm_key_vault" "vault" {
   }
 
   tags = var.default_tags
+
+  lifecycle {
+    ignore_changes = [access_policy[0].object_id]
+  }
 }
 
 data "azurerm_client_config" "current" {}
