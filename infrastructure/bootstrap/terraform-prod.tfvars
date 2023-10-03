@@ -1,5 +1,5 @@
-resource_name_prefix                         = "python-postgres-azure"
-infrabackend_storage_account_name            = "pythonpostgresaz"
+resource_name_prefix                         = "prod-python-postgres-azure"
+infrabackend_storage_account_name            = "prodpythonpostgresaz"
 infrabackend_storage_account_container_names = ["bootstrap", "application", "test"]
 storage_account_account_tier                 = "Standard"
 storage_account_replication_type             = "LRS"
