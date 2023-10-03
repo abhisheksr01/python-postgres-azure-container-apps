@@ -136,6 +136,22 @@ jobs:
 
       - name: Lint TF code
         run: tflint --chdir ./
+      
+      - name: Log in to Azure using OIDC
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZ_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZ_TENANT_ID }}
+          subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -backend-config=./backend-config.hcl
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
+          ARM_USE_OIDC: true
 
       - name: Check TF code fmt and validation
         run: terraform fmt --diff --check --recursive && terraform validate
