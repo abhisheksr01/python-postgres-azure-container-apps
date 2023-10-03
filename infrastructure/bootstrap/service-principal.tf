@@ -2,7 +2,7 @@ resource "azuread_application" "python_postgres_azure_app" {
   display_name = "${var.resource_name_prefix}-github-oidc"
   owners       = [data.azuread_client_config.current.object_id]
   tags         = var.default_set_tags
-    lifecycle {
+  lifecycle {
     ignore_changes = [owners]
   }
 }
