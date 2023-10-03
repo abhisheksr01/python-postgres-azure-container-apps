@@ -218,5 +218,5 @@ Thus it should be implemented for the application and infrastructure deployments
 - Restrict Ingress and Egress to the API.
 - Integrate Web Application Firewall.
 - Integrate API Gateway and API Management with the AZ Container Apps. Use appropriate Authentication and Authorization mechanism to protect the API.
-- Block Public access for the `Dev` and `Pre`
-- Setup `tunnel` for the CI/CD pipeline thus allowing access to Dev/Pre environment API for executing tests once deployed.
+- Block Public access for the `Dev` and `Pre`. Configure VNet to allow access only within Organizations private network, example once the users are connected to the VPN.
+- Setup `tunnel` for using with the CI/CD pipeline thus allowing access to Dev/Pre environment API for executing tests once deployed.
