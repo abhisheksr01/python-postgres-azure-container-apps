@@ -16,9 +16,14 @@ This repository contains solutions to two distinct tasks:
     - [DevSecOps Toolings](#devsecops-toolings)
   - [Running the API Service and DB locally](#running-the-api-service-and-db-locally)
   - [Infrastructure as Code](#infrastructure-as-code)
+  - [CI/CD - Github Actions](#cicd---github-actions)
 - [Theoretical Case: Secure Database Access](#theoretical-case-secure-database-access)
 - [Assumptions](#assumptions)
 - [ToDo](#todo)
+  - [App Code](#app-code)
+  - [IAC](#iac)
+  - [CI/CD](#cicd)
+  - [Networking/Security](#networkingsecurity)
 
 # Python Flask API
 ## Premise
@@ -69,6 +74,33 @@ All the tools we have used so far are Free to use for personal usage.
    ```bash
    curl "http://127.0.0.1:3000/rates?date_from=2021-01-01&date_to=2021-01-31&orig_code=CNGGZ&dest_code=EETLL"
    ```
+   The output should be something like this:
+    ```json
+    {
+       "rates" : [
+          {
+             "count" : 3,
+             "day" : "2021-01-31",
+             "price" : 1154.33333333333
+          },
+          {
+             "count" : 3,
+             "day" : "2021-01-30",
+             "price" : 1154.33333333333
+          },
+          ...
+       ]
+    }
+    ```
+4. Stop the application
+   ```bash
+   make stop-app-db
+   ```
+5. Check all available options
+   ```bash
+   make help
+   ```
+    </details>
     <details>
     <summary>Click here to check the local execution steps</summary>
     
@@ -148,14 +180,43 @@ All the tools we have used so far are Free to use for personal usage.
 The solution includes infrastructure as code components that allow you to deploy this environment on cloud providers such as Azure. Detailed instructions on how to deploy this environment to AWS or other clouds are provided in the codebase.
 
 **[WIP]**
+## CI/CD - Github Actions
+**[WIP]**
+
+Python Application Pipeline:
+![](/app-pipeline.png)
+
+Infrastructure Pipeline:
+![](./infra-pipeline.png)
 
 # Theoretical Case: Secure Database Access
 
 **[WIP]**
 
 # Assumptions
+- The API needs to be publicly accessible.
 
 # ToDo
-- Migrate from Pip to modern package manager like `Pipenv` or `Poetry` for better dependency management.
+
+Below is the list of the things we must do to make the implementation production ready.
+## App Code
+- Migrate from Pip to modern package managers like `Pipenv` or `Poetry` for better dependency management.
+- Implement Unit Test and E2E test appropriately to adhere `Test Pyramid strategy`.
+- Mature testing strategy: Currently we are using job id for tagging docker images which remains unique across the pipeline execution. A preferred approach would be to use `semver` for versioning the images and API.
+
+## IAC
 - Use `Terratest` for Integration test.
 - Implement a `Smoke/E2E` testing for IAC once the Infrastructure is provisioned. Execute on a scheduled event to detect any drift from the desired state defined as IAC.
+
+## CI/CD
+- Refactor Github Actions Pipeline code to reduce Boilerplate code and practice DRY.
+- Perform Pen Test after Dev Deployment.
+- Certain organization requires manual approval step before `Prod` deployment and creation of a `Change Request` for auditing purposes.
+Thus it should be implemented for the application and infrastructure deployments.
+
+## Networking/Security
+- Restrict Ingress and Egress to the API.
+- Integrate Web Application Firewall.
+- Integrate API Gateway and API Management with the AZ Container Apps. Use appropriate Authentication and Authorization mechanism to protect the API.
+- Block Public access for the `Dev` and `Pre`
+- Setup `tunnel` for the CI/CD pipeline thus allowing access to Dev/Pre environment API for executing tests once deployed.
