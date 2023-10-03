@@ -229,7 +229,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
           ARM_USE_OIDC: true
 
-      - name: Terraform Plan
+      - name: Terraform Apply
         run: |
           terraform apply --auto-approve
         env:
