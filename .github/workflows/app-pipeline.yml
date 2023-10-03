@@ -190,6 +190,7 @@ jobs:
       - name: Deploy App to AZ Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          containerAppName: python-postgres-azure
-          resourceGroup: python-postgres-azure-app-rg
-          imageToDeploy: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.run_id }}
+          registryUrl: docker.io
+          registryUsername: ${{ secrets.DOCKERHUB_USERNAME }}
+          registryPassword: ${{ secrets.DOCKERHUB_TOKEN }}
+          imageToDeploy: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.run_id }}
