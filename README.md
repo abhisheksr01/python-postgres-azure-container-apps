@@ -348,7 +348,7 @@ Secure Access to the Postgres Database deployed on Azure Cloud requires:
 
 ### Solution
 
-We would like to use below components of the application:
+We would like to use below components of the Azure Cloud for implementing the solution:
 
 - Azure Active Directory: Integrate Azure AD with PostgreSQL database to manage users, authentication, and access control. This allows for centralized user management and provides a basis for approval workflows.
 
@@ -357,6 +357,10 @@ We would like to use below components of the application:
 - Azure Logic Apps: Logic Apps to automates user creation, approval workflows, and password rotation. Logic Apps can integrate with Azure AD and Key Vault to perform these tasks.
 
 - Azure Monitor and Azure Security Center: Use of the Azure services to monitor and audit activities on our Azure PostgreSQL database. It provide insights and compliance checks for our database operations.
+
+The solution can be visualized with the help of below request flow diagram:
+
+![](db-secure-access-explained.jpg)
   
 # Assumptions
 - The API needs to be publicly accessible.
