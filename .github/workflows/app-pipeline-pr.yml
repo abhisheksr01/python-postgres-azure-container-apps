@@ -32,7 +32,7 @@ jobs:
   static-code-analysis-pr:
     runs-on: ubuntu-latest
     needs:
-      - linting
+      - linting-pr
     steps:
       - uses: actions/checkout@v3
 
@@ -54,7 +54,7 @@ jobs:
       run:
         working-directory: rates
     needs:
-      - linting
+      - linting-pr
     steps:
       - uses: actions/checkout@v3
 
@@ -73,7 +73,7 @@ jobs:
   bdd-test-pr:
     runs-on: ubuntu-latest
     needs:
-      - linting
+      - linting-pr
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
