@@ -304,7 +304,12 @@ app_container_config={
 </details>
 
 ## CI/CD - Github Actions
-**[WIP]**
+We use Github Actions for automating below operations:
+- Provisioning our Azure Infrastructure in all the environments with all the quality and security gates
+- Deploying the Python Flask API in all the environments with all the quality and security gates
+- Testing Dependabot and other PR's and automatically merging once all the success criteria are met
+- Scheduled Vulnerability Scanning of all the components of the SDLC and Infrastructure
+- Scheduled Smoke Test on Infrastructure for any drift detection
 
 Python Application Pipeline:
 ![](/app-pipeline.png)
@@ -313,8 +318,6 @@ Infrastructure Pipeline:
 ![](./infra-pipeline.png)
 
 # Theoretical Case: Secure Database Access
-
-**[WIP]**
 
 # Assumptions
 - The API needs to be publicly accessible.
