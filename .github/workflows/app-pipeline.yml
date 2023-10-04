@@ -12,6 +12,7 @@ on:
       - "!infrastructure/bootstrap/**"
       - "!db/**"
       - "!.github/workflows/infra-pipeline.yml"
+      - "!.github/workflows/app-pipeline-pr.yml"
   workflow_dispatch:
 
 permissions:
@@ -171,7 +172,7 @@ jobs:
           docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.run_id }}"
           docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest"
 
-  deploy-to-az-container-apps:
+  dev-deploy-to-az-container-apps:
     runs-on: ubuntu-latest
     needs:
       - docker-lint-build-scan-push
@@ -209,3 +210,95 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
           ARM_USE_OIDC: true
+  
+  placeholder-dev-e2e-test:
+    runs-on: ubuntu-latest
+    needs:
+      - dev-deploy-to-az-container-apps
+    steps:
+      - name: Placeholder for e2e test
+        run: |
+          echo "Implement e2e test and execute them here in the pipeline"
+
+  placeholder-pre-deploy-to-az-container-apps:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-dev-e2e-test
+    steps:
+      - name: Placeholder pre-deploy-to-az-container-apps
+        run: |
+          echo "Implement pre-deploy-to-az-container-apps and execute them here in the pipeline"
+
+  placeholder-pre-e2e-test:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-pre-deploy-to-az-container-apps
+    steps:
+      - name: Placeholder pre-deploy-to-az-container-apps
+        run: |
+          echo "Implement pre-deploy-to-az-container-apps and execute them here in the pipeline"
+  
+  placeholder-pre-pen-test:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-pre-deploy-to-az-container-apps
+    steps:
+      - name: Placeholder for pen test
+        run: |
+          echo "Implement pen test and execute them here in the pipeline"
+
+  placeholder-pre-load-performance-test:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-pre-deploy-to-az-container-apps
+    steps:
+      - name: Placeholder pre-deploy-to-az-container-apps
+        run: |
+          echo "Implement pre-deploy-to-az-container-apps and execute them here in the pipeline"
+
+  placeholder-change-management-entry:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-pre-load-performance-test
+      - placeholder-pre-pen-test
+      - placeholder-pre-e2e-test
+    steps:
+      - name: Placeholder pre-deploy-to-az-container-apps
+        run: |
+          echo "Implement pre-deploy-to-az-container-apps and execute them here in the pipeline"
+
+  placeholder-prod-manual-approval:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-change-management-entry
+    steps:
+      - name: Placeholder pre-deploy-to-az-container-apps
+        run: |
+          echo "Implement pre-deploy-to-az-container-apps and execute them here in the pipeline"
+
+  placeholder-prod-deploy-to-az-container-apps:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-prod-manual-approval
+    steps:
+      - name: Placeholder pre-deploy-to-az-container-apps
+        run: |
+          echo "Implement pre-deploy-to-az-container-apps and execute them here in the pipeline"
+  
+  placeholder-prod-e2e-test:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-prod-deploy-to-az-container-apps
+    steps:
+      - name: Placeholder pre-deploy-to-az-container-apps
+        run: |
+          echo "Implement pre-deploy-to-az-container-apps and execute them here in the pipeline"
+  
+  placeholder-prod-pen-test:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-prod-deploy-to-az-container-apps
+    steps:
+      - name: Placeholder for pen test
+        run: |
+          echo "Implement pen test and execute them here in the pipeline"
