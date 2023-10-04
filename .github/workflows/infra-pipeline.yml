@@ -39,7 +39,7 @@ jobs:
       
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config=./backend-config-test.hcl -var-file=./dev/terraform.tfvars
+        run: terraform init -backend-config=./backend-config-test.hcl
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -96,7 +96,7 @@ jobs:
       
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config=./backend-config-test.hcl -var-file=./dev/terraform.tfvars
+        run: terraform init -backend-config=./dev/backend-config.hcl
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -148,7 +148,7 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: -backend-config=./backend-config-test.hcl -var-file=./dev/terraform.tfvars
+        run: terraform init -backend-config=./backend-config-test.hcl
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -250,7 +250,7 @@ jobs:
   placeholder-pre-terraform-plan:
     runs-on: ubuntu-latest
     needs:
-      - dev-terraform-apply
+      - placeholder-dev-infra-e2e-test
     steps:
       - name: Placeholder for placeholder-dev-infra-e2e-test
         run: |
@@ -273,8 +273,8 @@ jobs:
       - name: Placeholder for placeholder-dev-infra-e2e-test
         run: |
           echo "Implement e2e test and execute them here in the pipeline"
-
-  placeholder-prod-change-management:
+  
+  placeholder-prod-terraform-plan:
     runs-on: ubuntu-latest
     needs:
       - placeholder-pre-infra-e2e-test
@@ -283,10 +283,19 @@ jobs:
         run: |
           echo "Implement e2e test and execute them here in the pipeline"
 
+  placeholder-prod-change-management:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-prod-terraform-plan
+    steps:
+      - name: Placeholder for placeholder-dev-infra-e2e-test
+        run: |
+          echo "Implement e2e test and execute them here in the pipeline"
+
   placeholder-prod-manual-approval:
     runs-on: ubuntu-latest
     needs:
-      - placeholder-pre-infra-e2e-test
+      - placeholder-prod-change-management
     steps:
       - name: Placeholder for placeholder-dev-infra-e2e-test
         run: |
