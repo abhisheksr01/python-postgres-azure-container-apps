@@ -4,6 +4,10 @@ This repository contains solutions to two distinct tasks:
 
 1. A Python Flask API deploying to Production Environment
 2. Secure Database Access from the API
+
+The codebase can be better visualized as below:
+
+![Visualization of the codebase](./diagram.svg)
    
 # Table of Content
 
@@ -77,27 +81,37 @@ All the tools we have used so far are Free to use for personal usage.
     The above command uses docker compose to run containerized instance of our API and `postgres-13.5` database and then uploads the mock data into the postgres database.
 
 3. Test the application by making API requests. For example:
-   ```bash
-   curl "http://127.0.0.1:3000/rates?date_from=2021-01-01&date_to=2021-01-31&orig_code=CNGGZ&dest_code=EETLL"
-   ```
-   The output should be something like this:
-    ```json
-    {
-       "rates" : [
-          {
-             "count" : 3,
-             "day" : "2021-01-31",
-             "price" : 1154.33333333333
-          },
-          {
-             "count" : 3,
-             "day" : "2021-01-30",
-             "price" : 1154.33333333333
-          },
-          ...
-       ]
-    }
-    ```
+   - GET - Greeting API (Health check)
+      ```bash
+      curl http://127.0.0.1:3000
+      ```
+
+      ```json
+      {"message":"Hello world!"}
+      ```
+   - GET - Rates API
+      ```bash
+      curl "http://127.0.0.1:3000/rates?date_from=2021-01-01&date_to=2021-01-31&orig_code=CNGGZ&dest_code=EETLL"
+      ```
+
+      The output should be something like this:
+       ```json
+       {
+          "rates" : [
+             {
+                "count" : 3,
+                "day" : "2021-01-31",
+                "price" : 1154.33333333333
+             },
+             {
+                "count" : 3,
+                "day" : "2021-01-30",
+                "price" : 1154.33333333333
+             },
+             ...
+          ]
+       }
+       ```
 4. Stop the application
    ```bash
    make stop-app-db
@@ -275,7 +289,7 @@ The application infrastructure primarily contains the Terraform code for deployi
 
 Override the default values set in the `variables.tf` for each environment in the `[ENVIRONMENT_NAME]/terraform.tfvars` file respectively as shown below:
 
-```json
+```terraform
 app_container_config={
     name          = "[ENVIRONMENT_NAME]-python-postgres-azure-app"
     revision_mode = "Single"
