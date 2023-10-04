@@ -21,6 +21,8 @@ This repository contains solutions to two distinct tasks:
     - [Application-Infrastructure `/infrastructure/app-infra`:](#application-infrastructure-infrastructureapp-infra)
   - [CI/CD - Github Actions](#cicd---github-actions)
 - [Theoretical Case: Secure Database Access](#theoretical-case-secure-database-access)
+    - [Secure Access Requirements:](#secure-access-requirements)
+    - [Solution](#solution)
 - [Assumptions](#assumptions)
 - [ToDo](#todo)
   - [App Code](#app-code)
@@ -64,6 +66,7 @@ All the tools we have used so far are Free to use for personal usage.
 - *Checkov* - IAC vulnerability scanning tool, we have used it for scanning our Dockerfile.
 - *trivy* - For scanning vulnerabilities in docker image even before pushing it to the registry. 
 - *Owasp Zap* - PenTest
+- Github Secret Scanning
 - *Dependabot and Mergify* - Dependabot bumps the dependencies by creating a PR. This helps us keep our dependencies up to date and avoid vulnerabilities. We also use Mergify to streamline the PR merging process, automating it when all the necessary checks and criteria are satisfied.
 ## Running the API Service and DB locally
 1. Start Docker Desktop
@@ -311,6 +314,10 @@ We use Github Actions for automating below operations:
 - Scheduled Vulnerability Scanning of all the components of the SDLC and Infrastructure
 - Scheduled Smoke Test on Infrastructure for any drift detection
 
+We are using `Github-OIDC` for securing the connectivity between the Github Actions and Azure Cloud thus reducing the risk of compromising the credentials. Once the service principal is provisioned by the bootstrap infrastructure you must configure them in the github repository under `Settings > Secrets and Variables > Actions > New Repository Secret`
+
+![](./github-secrets.png)
+
 Python Application Pipeline:
 ![](/app-pipeline.png)
 
@@ -319,6 +326,24 @@ Infrastructure Pipeline:
 
 # Theoretical Case: Secure Database Access
 
+### Secure Access Requirements:
+Secure Access to the Postgres Database deployed on Azure Cloud requires:
+- End-to-end auditing capabilities for any operation performed.
+- An automated solution for rotating the database credentials every X number of days and workflow capabilities for user management and manual approval/reviews before an action being taken.
+- The solution should provide zero downtime for the application.
+
+### Solution
+
+We would like to use below components of the application:
+
+- Azure Active Directory: Integrate Azure AD with PostgreSQL database to manage users, authentication, and access control. This allows for centralized user management and provides a basis for approval workflows.
+
+- Azure Key Vault: Store and manage the secrets and passwords securely within Azure Key Vault. Key Vault provides features for secret rotation and auditing, which align with our compliance requirements.
+
+- Azure Logic Apps: Logic Apps to automates user creation, approval workflows, and password rotation. Logic Apps can integrate with Azure AD and Key Vault to perform these tasks.
+
+- Azure Monitor and Azure Security Center: Use of the Azure services to monitor and audit activities on our Azure PostgreSQL database. It provide insights and compliance checks for our database operations.
+  
 # Assumptions
 - The API needs to be publicly accessible.
 
@@ -327,8 +352,8 @@ Infrastructure Pipeline:
 Below is the list of the things we must do to make the implementation production ready.
 ## App Code
 - Migrate from Pip to modern package managers like `Pipenv` or `Poetry` for better dependency management.
-- Implement Unit Test and E2E test appropriately to adhere `Test Pyramid strategy`.
-- Mature testing strategy: Currently we are using job id for tagging docker images which remains unique across the pipeline execution. A preferred approach would be to use `semver` for versioning the images and API.
+- Implement Unit Test and E2E test appropriately to adhere `Test Pyramid strategy` thus maturing testing strategy. 
+- Tagging Strategy: Currently we are using job id for tagging docker images which remains unique across the pipeline execution. A preferred approach would be to use `semver` for versioning the images and API.
 
 ## IAC
 - Use `Terratest` for Integration test.
@@ -347,3 +372,4 @@ Thus it should be implemented for the application and infrastructure deployments
 - Integrate API Gateway and API Management with the AZ Container Apps. Use appropriate Authentication and Authorization mechanism to protect the API.
 - Block Public access for the `Dev` and `Pre`. Configure VNet to allow access only within Organizations private network, example once the users are connected to the VPN.
 - Setup `tunnel` for using with the CI/CD pipeline thus allowing access to Dev/Pre environment API for executing tests once deployed.
+- Limit the scope of the Service Principals and roles assigned. Create a separate Service Principal for application deployment.
