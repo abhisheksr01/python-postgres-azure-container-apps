@@ -381,7 +381,10 @@ Below is the list of the things we must do to make the implementation production
 
 ## IAC
 - Use `Terratest` for Integration test.
-- Implement a `Smoke/E2E` testing for IAC once the Infrastructure is provisioned. Execute on a scheduled event to detect any drift from the desired state defined as IAC.
+- Implement `Smoke/E2E` testing for IAC once the Infrastructure is provisioned. Execute on a scheduled event to detect any drift from the desired state defined as IAC.
+- Pass the plan artifact from plan to apply. Terraform best practice.
+- Analyze the pros and cons of TF workspace.
+- Analyze the pros and cons of Splitting the AZ Container Apps Environment provisioning through TF and AZ Container App deployment with configuration through Github Actions and YML configs.
 
 ## CI/CD
 - Refactor Github Actions Pipeline code to reduce Boilerplate code and practice DRY.
