@@ -1,4 +1,4 @@
-name: bootstrap-infrastructure
+name: bootstrap-infrastructure-deployment
 
 env:
   PYTHON_VERSION: "3.11"
@@ -192,7 +192,7 @@ jobs:
 
       - name: Terraform Plan
         run: |
-          terraform plan -var-file=terraform-dev.tfvars -out plan
+          terraform plan -var-file=./dev/terraform.tfvars -out plan
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
