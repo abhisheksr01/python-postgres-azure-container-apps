@@ -195,7 +195,7 @@ jobs:
       
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config=./backend-config.hcl
+        run: terraform init -backend-config=./dev/backend-config.hcl
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -204,7 +204,7 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          terraform apply --auto-approve -var-file=terraform-dev.tfvars -var="registry_username=${{ secrets.DOCKERHUB_USERNAME }}" -var="registry_password=${{ secrets.DOCKERHUB_TOKEN }}" -var="image=${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.run_id }}"
+          terraform apply --auto-approve -var-file=./dev/terraform.tfvars -var="registry_username=${{ secrets.DOCKERHUB_USERNAME }}" -var="registry_password=${{ secrets.DOCKERHUB_TOKEN }}" -var="image=${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.run_id }}"
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
