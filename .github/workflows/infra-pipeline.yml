@@ -231,7 +231,7 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          terraform apply -backend-config=./dev/backend-config.hcl -var-file=./dev/terraform.tfvars --auto-approve
+          terraform apply --auto-approve -var-file=./dev/terraform.tfvars
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
