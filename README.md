@@ -29,6 +29,7 @@ The codebase can be better visualized as below:
     - [Solution](#solution)
 - [Assumptions](#assumptions)
 - [ToDo](#todo)
+  - [Documentation](#documentation)
   - [App Code](#app-code)
   - [IAC](#iac)
   - [CI/CD](#cicd)
@@ -364,10 +365,15 @@ The solution can be visualized with the help of below request flow diagram:
   
 # Assumptions
 - The API needs to be publicly accessible.
+- The intendant audience has decent understanding of Azure Cloud, Github Actions, Terraform, Docker.
+- They are using Macbook or similar development environment.
 
 # ToDo
 
 Below is the list of the things we must do to make the implementation production ready.
+## Documentation
+- Add Links to the official documentations.
+  
 ## App Code
 - Migrate from Pip to modern package managers like `Pipenv` or `Poetry` for better dependency management.
 - Implement Unit Test and E2E test appropriately to adhere `Test Pyramid strategy` thus maturing testing strategy. 
