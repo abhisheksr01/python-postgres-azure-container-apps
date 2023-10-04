@@ -16,6 +16,9 @@ This repository contains solutions to two distinct tasks:
     - [DevSecOps Toolings](#devsecops-toolings)
   - [Running the API Service and DB locally](#running-the-api-service-and-db-locally)
   - [Infrastructure as Code](#infrastructure-as-code)
+    - [Bootstrap Infrastructure - `/infrastructure/bootstrap`:](#bootstrap-infrastructure---infrastructurebootstrap)
+      - [**Chicken and Egg Paradox**](#chicken-and-egg-paradox)
+    - [Application-Infrastructure `/infrastructure/app-infra`:](#application-infrastructure-infrastructureapp-infra)
   - [CI/CD - Github Actions](#cicd---github-actions)
 - [Theoretical Case: Secure Database Access](#theoretical-case-secure-database-access)
 - [Assumptions](#assumptions)
@@ -177,9 +180,129 @@ All the tools we have used so far are Free to use for personal usage.
     </details>
 
 ## Infrastructure as Code
-The solution includes infrastructure as code components that allow you to deploy this environment on cloud providers such as Azure. Detailed instructions on how to deploy this environment to AWS or other clouds are provided in the codebase.
+The solution uses Terraform (infrastructure as code components) that allow you to deploy this environment on cloud providers such as Azure.
 
-**[WIP]**
+
+We have 2 logical segregation of the terraform code as below:
+
+### Bootstrap Infrastructure - `/infrastructure/bootstrap`:
+
+Bootstrap Infrastructure refers to the essential infrastructure resources that are necessary during the initial provisioning phase and ideally remains unchanged or require infrequent modifications.
+
+Contains terraform code for provisioning Resource Group, Storage account, Service  Principal etc.
+
+These kind of infrastructure requires higher level of privileges for provisioning and in some organization it's maintained by a separate team (Cloud Engineering, SRE etc) for various purposes.
+
+<details>
+<summary>Click here to see implementation details</summary>
+
+#### **Chicken and Egg Paradox**
+
+Building infrastructure from scratch poses a "Chicken and Egg Paradox" challenge.
+This challenge arises because, for Terraform to store its state, a storage container is required. We may choose to provision this storage container manually.
+However, as per our commitment to provisioning all resources through Infrastructure as Code (IAC), we encounter a problem. We can deal with this problem as below:
+
+- Initialize Terraform without a "remote backend."
+- Write bare minimal Terraform code for provisioning a storage container.
+- Apply Terraform changes to create this storage container successfully.
+- After the container is provisioned, the Terraform backend configuration is added to the Terraform provider.Subsequently, Terraform is reinitialized.
+- Now, the backend provisioning is managed by Terraform itself, ensuring ease of management.
+
+Follow below steps for provisioning bootstrap infrastructure:
+
+- Ensure you have Terraform `1.5.7` installed
+
+   ```bash
+   terraform --version
+   ```
+
+- Authenticate Azure CLI by running below command from the terminal (or other appropriate means)
+
+   ```bash
+   az login
+   ```
+
+- From the terminal change the directory
+   ```bash
+   cd infrastructure/bootstrap
+   ```
+- Comment terraform backend config `backend "azurerm" {}` is commented in `infrastructure\bootstrap\main.tf`
+
+- Initialize Terraform for dev environment
+   ```bash
+   terraform init -var-file=./dev/terraform.tfvars
+   ```
+
+- Plan the Terraform changes and review
+   ```bash
+   terraform plan -var-file=./dev/terraform.tfvars
+   ```
+
+- Apply changes after its reviewed
+   ```bash
+   terraform init -var-file=./dev/terraform.tfvars
+   ```
+- Re Initialize Terraform to use a remote backend
+
+   Uncomment `# backend "azurerm" {}`
+
+   Then execute below command and when prompted respond as `yes`:
+
+   ```bash
+   terraform init -backend-config=./dev/backend-config.hcl -var-file=./dev/terraform.tfvars
+   ```
+   Once successfully executed the local `terraform.state` file has been securely  stored in the Azure Storage Account.
+
+- Repeat the steps for other environments.
+
+We have configured a `bootstrap-infrastructure` Github Actions Pipeline to automate the bootstrap infrastructure provisioning and avoid any local execution apart from the initial setup [here](.github/workflows/infra-pipeline.yml)
+  
+</details>
+
+### Application-Infrastructure `/infrastructure/app-infra`:
+
+Contains terraform code for provisioning Azure VNet, VNet associated infrastructure components and Azure Container Apps for deploying a simple containerized application.
+
+Application infrastructure refers to any infrastructure that we will use for deploying and running the application. They are intended for the team who owns the application and generally requires very specific privileges for the infrastructure deployment.
+
+<details>
+<summary> Click here to see the implementation details</summary></br>
+
+The application infrastructure primarily contains the Terraform code for deploying the Python Flask API and the Database connection configurations can be managed by the terraform code defined in the `terraform.tfvars` in the respective environment directory.
+
+Override the default values set in the `variables.tf` for each environment in the `[ENVIRONMENT_NAME]/terraform.tfvars` file respectively as shown below:
+
+```json
+app_container_config={
+    name          = "[ENVIRONMENT_NAME]-python-postgres-azure-app"
+    revision_mode = "Single"
+    memory        = "0.5Gi"
+    cpu           = 0.25
+    ingress = {
+      allow_insecure_connections = false
+      external_enabled           = true
+      target_port                = 5000
+    }
+    environment_variables = [
+      {
+        name  = "name"
+        value = "[ENVIRONMENT_NAME]postgres"
+      },
+      {
+        name  = "user"
+        value = "[ENVIRONMENT_NAME]abhishek"
+      },
+      {
+        name  = "host"
+        value = "[POSTGRES_HOST_URL_FOR_RESPECTIVE_ENVIRONMENT]"
+      }
+    ]
+  }
+```
+
+   These infrastructure changes are deployed as part of the `python-application-deployment` Github Actions Pipeline configure [here](.github/workflows/app-pipeline.yml)
+</details>
+
 ## CI/CD - Github Actions
 **[WIP]**
 
@@ -213,6 +336,7 @@ Below is the list of the things we must do to make the implementation production
 - Perform Pen Test after Dev Deployment.
 - Certain organization requires manual approval step before `Prod` deployment and creation of a `Change Request` for auditing purposes.
 Thus it should be implemented for the application and infrastructure deployments.
+- Automate `Chaos Testing` using Simian Army for testing Disaster Recovery strategy.
 
 ## Networking/Security
 - Restrict Ingress and Egress to the API.
