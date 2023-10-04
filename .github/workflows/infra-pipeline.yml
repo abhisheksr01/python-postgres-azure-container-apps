@@ -39,7 +39,7 @@ jobs:
       
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config=./backend-config-test.hcl
+        run: terraform init -backend-config=./backend-config-test.hcl -var-file=./dev/terraform.tfvars
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -96,7 +96,7 @@ jobs:
       
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config=./backend-config.hcl
+        run: terraform init -backend-config=./backend-config-test.hcl -var-file=./dev/terraform.tfvars
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -148,7 +148,7 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config=./backend-config.hcl
+        run: -backend-config=./backend-config-test.hcl -var-file=./dev/terraform.tfvars
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -183,7 +183,7 @@ jobs:
       
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config=./backend-config.hcl
+        run: terraform init -backend-config=./dev/backend-config.hcl -var-file=./dev/terraform.tfvars
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -222,7 +222,7 @@ jobs:
       
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config=./backend-config.hcl
+        run: terraform init -backend-config=./dev/backend-config.hcl -var-file=./dev/terraform.tfvars
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -231,9 +231,81 @@ jobs:
 
       - name: Terraform Apply
         run: |
-          terraform apply -var-file=terraform-dev.tfvars --auto-approve
+          terraform apply -backend-config=./dev/backend-config.hcl -var-file=./dev/terraform.tfvars --auto-approve
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
           ARM_USE_OIDC: true
+  
+  placeholder-dev-infra-e2e-test:
+    runs-on: ubuntu-latest
+    needs:
+      - dev-terraform-apply
+    steps:
+      - name: Placeholder for placeholder-dev-infra-e2e-test
+        run: |
+          echo "Implement e2e test and execute them here in the pipeline"
+  
+  placeholder-pre-terraform-plan:
+    runs-on: ubuntu-latest
+    needs:
+      - dev-terraform-apply
+    steps:
+      - name: Placeholder for placeholder-dev-infra-e2e-test
+        run: |
+          echo "Implement e2e test and execute them here in the pipeline"
+  
+  placeholder-pre-terraform-apply:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-pre-terraform-plan
+    steps:
+      - name: Placeholder for placeholder-dev-infra-e2e-test
+        run: |
+          echo "Implement e2e test and execute them here in the pipeline"
+
+  placeholder-pre-infra-e2e-test:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-pre-terraform-apply
+    steps:
+      - name: Placeholder for placeholder-dev-infra-e2e-test
+        run: |
+          echo "Implement e2e test and execute them here in the pipeline"
+
+  placeholder-prod-change-management:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-pre-infra-e2e-test
+    steps:
+      - name: Placeholder for placeholder-dev-infra-e2e-test
+        run: |
+          echo "Implement e2e test and execute them here in the pipeline"
+
+  placeholder-prod-manual-approval:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-pre-infra-e2e-test
+    steps:
+      - name: Placeholder for placeholder-dev-infra-e2e-test
+        run: |
+          echo "Implement e2e test and execute them here in the pipeline"
+  
+  placeholder-prod-terraform-apply:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-prod-manual-approval
+    steps:
+      - name: Placeholder for placeholder-dev-infra-e2e-test
+        run: |
+          echo "Implement e2e test and execute them here in the pipeline"
+
+  placeholder-prod-e2e-test:
+    runs-on: ubuntu-latest
+    needs:
+      - placeholder-prod-terraform-apply
+    steps:
+      - name: Placeholder for placeholder-dev-infra-e2e-test
+        run: |
+          echo "Implement e2e test and execute them here in the pipeline"
