@@ -23,6 +23,6 @@ func TestTerraformAzureResourceGroup(t *testing.T) {
 	// Verify that our Bucket name matches variable
 	resourceGroup, err := tfplanstruct.GetResourceChangeAfterByAddressE("azurerm_resource_group.app_rg", plan)
 	assert.Empty(t, err)
-	assert.Equal(t, "python-postgres-azure-app-rg", resourceGroup["name"])
+	assert.Equal(t, "dev-python-postgres-azure-app-rg", resourceGroup["name"])
 	assert.Equal(t, "uksouth", resourceGroup["location"])
 }
