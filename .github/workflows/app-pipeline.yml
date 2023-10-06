@@ -159,7 +159,7 @@ jobs:
 
       - id: bump-version
         name: Bump to Next Semver Version
-        uses: armakuni/github-actions/bump-version@0.14.11
+        uses: armakuni/github-actions/bump-version@v0.14.11
 
       - name: Build Docker Image
         run: |
