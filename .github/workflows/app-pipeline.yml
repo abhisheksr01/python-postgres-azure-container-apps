@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   check-conventional-commits:
-    uses: armakuni/github-actions/.github/workflows/check-conventional-commits.yml@v0.14.11
+    uses: armakuni/github-actions/.github/workflows/check-conventional-commits.yml@v0.16.1
 
   linting:
     runs-on: ubuntu-latest
@@ -166,7 +166,7 @@ jobs:
 
       - id: bump-version
         name: Bump to Next Semver Version
-        uses: armakuni/github-actions/bump-version@v0.14.11
+        uses: armakuni/github-actions/bump-version@v0.16.1
 
       - name: Build Docker Image
         run: |
@@ -344,7 +344,7 @@ jobs:
     needs:
       - placeholder-prod-deploy-to-az-container-apps
     if: github.ref == 'refs/heads/main'
-    uses: armakuni/github-actions/.github/workflows/tag-and-release.yml@v0.14.10
+    uses: armakuni/github-actions/.github/workflows/tag-and-release.yml@v0.16.1
     secrets: inherit
     with:
       download-artifacts: true
