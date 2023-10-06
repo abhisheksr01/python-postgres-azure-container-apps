@@ -12,8 +12,13 @@ permissions:
   contents: read
 
 jobs:
+  check-conventional-commits:
+    uses: armakuni/github-actions/.github/workflows/check-conventional-commits.yml@v0.14.11
+
   linting-pr:
     runs-on: ubuntu-latest
+    needs:
+      - check-conventional-commits
     steps:
       - uses: actions/checkout@v4
 

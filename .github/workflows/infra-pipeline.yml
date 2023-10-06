@@ -16,8 +16,13 @@ permissions:
   id-token: write # This is required for requesting the JWT
 
 jobs:
+  check-conventional-commits:
+    uses: armakuni/github-actions/.github/workflows/check-conventional-commits.yml@v0.14.11
+
   run-unit-tests:
     runs-on: ubuntu-latest
+    needs:
+      - check-conventional-commits
     defaults:
       run:
         working-directory: infrastructure/bootstrap
@@ -36,7 +41,7 @@ jobs:
           terraform_version: 1.5.7
           # https://github.com/gruntwork-io/terragrunt/issues/1202
           terraform_wrapper: false
-      
+
       - name: Terraform Init
         id: init
         run: terraform init -backend-config=./backend-config-test.hcl
@@ -45,7 +50,7 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
           ARM_USE_OIDC: true
-          
+
       - uses: actions/setup-go@v4
         with:
           go-version: 1.21.0
@@ -67,6 +72,8 @@ jobs:
 
   terraform-compliance:
     runs-on: ubuntu-latest
+    needs:
+      - check-conventional-commits
     defaults:
       run:
         working-directory: infrastructure/bootstrap
@@ -93,7 +100,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.7
-      
+
       - name: Terraform Init
         id: init
         run: terraform init -backend-config=./dev/backend-config.hcl
@@ -118,6 +125,8 @@ jobs:
 
   tf-code-lint-and-sast:
     runs-on: ubuntu-latest
+    needs:
+      - check-conventional-commits
     defaults:
       run:
         working-directory: infrastructure/bootstrap
@@ -138,7 +147,7 @@ jobs:
 
       - name: Lint TF code
         run: tflint --chdir ./
-      
+
       - name: Log in to Azure using OIDC
         uses: azure/login@v1
         with:
@@ -180,7 +189,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.7
-      
+
       - name: Terraform Init
         id: init
         run: terraform init -backend-config=./dev/backend-config.hcl -var-file=./dev/terraform.tfvars
@@ -198,7 +207,7 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
           ARM_USE_OIDC: true
-    
+
   dev-terraform-apply:
     runs-on: ubuntu-latest
     needs:
@@ -219,7 +228,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.7
-      
+
       - name: Terraform Init
         id: init
         run: terraform init -backend-config=./dev/backend-config.hcl -var-file=./dev/terraform.tfvars
@@ -237,7 +246,7 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
           ARM_USE_OIDC: true
-  
+
   placeholder-dev-infra-e2e-test:
     runs-on: ubuntu-latest
     needs:
@@ -246,7 +255,7 @@ jobs:
       - name: Placeholder for placeholder-dev-infra-e2e-test
         run: |
           echo "Implement e2e test and execute them here in the pipeline"
-  
+
   placeholder-pre-terraform-plan:
     runs-on: ubuntu-latest
     needs:
@@ -255,7 +264,7 @@ jobs:
       - name: Placeholder for placeholder-dev-infra-e2e-test
         run: |
           echo "Implement e2e test and execute them here in the pipeline"
-  
+
   placeholder-pre-terraform-apply:
     runs-on: ubuntu-latest
     needs:
@@ -273,7 +282,7 @@ jobs:
       - name: Placeholder for placeholder-dev-infra-e2e-test
         run: |
           echo "Implement e2e test and execute them here in the pipeline"
-  
+
   placeholder-prod-terraform-plan:
     runs-on: ubuntu-latest
     needs:
@@ -300,7 +309,7 @@ jobs:
       - name: Placeholder for placeholder-dev-infra-e2e-test
         run: |
           echo "Implement e2e test and execute them here in the pipeline"
-  
+
   placeholder-prod-terraform-apply:
     runs-on: ubuntu-latest
     needs:
