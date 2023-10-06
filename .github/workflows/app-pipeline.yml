@@ -129,6 +129,12 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: fetch-tags
+        run: git fetch --tags origin
+        shell: bash
 
       - name: Set up Python version
         uses: actions/setup-python@v4.7.1
@@ -151,9 +157,15 @@ jobs:
         run: |
           checkov -d . --framework dockerfile --skip-check CKV_DOCKER_2
 
+      - id: bump-version
+        name: Bump to Next Semver Version
+        uses: armakuni/github-actions/bump-version@0.14.11
+
       - name: Build Docker Image
         run: |
-          docker build -t "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.run_id }}" .
+          echo "The next tag version is ::: ${{ steps.bump-version.outputs.current_version }}"
+          echo "${{ steps.bump-version.outputs.current_version }}" > tag-version.txt
+          docker build -t "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ steps.bump-version.outputs.current_version }}" .
           echo "docker image built successfully"
 
       - name: Scan Docker Image Vulnerabilities
@@ -168,9 +180,15 @@ jobs:
 
       - name: Push Docker Image
         run: |
-          docker tag "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.run_id }}" "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest"
-          docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.run_id }}"
+          docker tag "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ steps.bump-version.outputs.current_version }}" "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest"
+          docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ steps.bump-version.outputs.current_version }}"
           docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest"
+      
+      - name: Upload Next Tag Version
+        uses: actions/upload-artifact@v3
+        with:
+          name: tag-version
+          path: tag-version.txt
 
   dev-deploy-to-az-container-apps:
     runs-on: ubuntu-latest
@@ -201,10 +219,17 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
           ARM_USE_OIDC: true
+      
+      - name: Download Next Tag Version
+        uses: actions/download-artifact@v3
+        with:
+          name: tag-version
 
       - name: Terraform Apply
         run: |
-          terraform apply --auto-approve -var-file=./dev/terraform.tfvars -var="registry_username=${{ secrets.DOCKERHUB_USERNAME }}" -var="registry_password=${{ secrets.DOCKERHUB_TOKEN }}" -var="image=${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.run_id }}"
+          cat tag-version.txt
+          TAG_VERSION=$(cat tag-version.txt)
+          terraform apply --auto-approve -var-file=./dev/terraform.tfvars -var="registry_username=${{ secrets.DOCKERHUB_USERNAME }}" -var="registry_password=${{ secrets.DOCKERHUB_TOKEN }}" -var="image=${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:$TAG_VERSION"
         env:
           ARM_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
@@ -225,8 +250,13 @@ jobs:
     needs:
       - placeholder-dev-e2e-test
     steps:
+      - name: Download Next Tag Version
+        uses: actions/download-artifact@v3
+        with:
+          name: tag-version
       - name: Placeholder pre-deploy-to-az-container-apps
         run: |
+          cat tag-version.txt
           echo "Implement pre-deploy-to-az-container-apps and execute them here in the pipeline"
 
   placeholder-pre-e2e-test:
@@ -272,8 +302,13 @@ jobs:
     needs:
       - placeholder-change-management-entry
     steps:
+      - name: Download Next Tag Version
+        uses: actions/download-artifact@v3
+        with:
+          name: tag-version
       - name: Placeholder pre-deploy-to-az-container-apps
         run: |
+          cat tag-version.txt
           echo "Implement pre-deploy-to-az-container-apps and execute them here in the pipeline"
 
   placeholder-prod-deploy-to-az-container-apps:
@@ -290,10 +325,24 @@ jobs:
     needs:
       - placeholder-prod-deploy-to-az-container-apps
     steps:
-      - name: Placeholder pre-deploy-to-az-container-apps
+      - name: Download Next Tag Version
+        uses: actions/download-artifact@v3
+        with:
+          name: tag-version
+      - name: Placeholder prod-deploy-to-az-container-apps
         run: |
-          echo "Implement pre-deploy-to-az-container-apps and execute them here in the pipeline"
+          cat tag-version.txt
+          echo "Implement prod-deploy-to-az-container-apps and execute them here in the pipeline"
   
+  create-release:
+    needs:
+      - placeholder-prod-deploy-to-az-container-apps
+    if: github.ref == 'refs/heads/main'
+    uses: armakuni/github-actions/.github/workflows/tag-and-release.yml@v0.14.10
+    secrets: inherit
+    with:
+      download-artifacts: true
+
   placeholder-prod-pen-test:
     runs-on: ubuntu-latest
     needs:
