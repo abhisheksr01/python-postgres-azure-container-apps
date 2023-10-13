@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   check-conventional-commits:
-    uses: armakuni/github-actions/.github/workflows/check-conventional-commits.yml@v0.14.11
+    uses: armakuni/github-actions/.github/workflows/check-conventional-commits.yml@v0.16.6
 
   run-unit-tests:
     runs-on: ubuntu-latest
