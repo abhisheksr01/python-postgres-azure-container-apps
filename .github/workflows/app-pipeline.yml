@@ -192,7 +192,7 @@ jobs:
           docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest"
       
       - name: Upload Next Tag Version
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tag-version
           path: tag-version.txt
