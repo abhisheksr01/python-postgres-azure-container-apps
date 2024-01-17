@@ -51,7 +51,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
           ARM_USE_OIDC: true
 
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: 1.21.0
 
