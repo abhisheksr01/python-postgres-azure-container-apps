@@ -1,4 +1,4 @@
-FROM python:3.11-alpine
+FROM python:3.12.0a1-alpine
 
 # Set environment variables for the non-root user
 ENV USER nonroot
