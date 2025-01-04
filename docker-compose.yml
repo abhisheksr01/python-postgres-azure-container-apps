@@ -1,8 +1,6 @@
-version: '3'
-
 services:
   app:
-    image: 'abhisheksr01/python-postgres-azure:0.0.1'
+    image: 'abhisheksr01/python-postgres-azure:local'
     restart: on-failure
     build:
       context: .

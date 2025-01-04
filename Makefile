@@ -27,7 +27,7 @@ start-app-db: FORCE ##@target Starts the app and db with sample data dump
 	./scripts/start.sh
 
 stop-app-db: FORCE ##@target stops the app and db with sample data dump
-	docker compose down && docker container prune -f && docker rmi abhisheksr01/python-postgres-azure:0.0.1 -f && docker ps -a
+	docker compose down && docker container prune -f && docker rmi abhisheksr01/python-postgres-azure:local -f && docker ps -a
 
 clear: FORCE ##@target Clears the "__pycache__" & ".pytest_cache". Will be required to run twice.
 	@find . -name "__pycache__" -exec rm -rf {} \;
