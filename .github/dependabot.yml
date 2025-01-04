@@ -5,11 +5,32 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
+  - package-ecosystem: "pip"
     directory: "/rates" # Location of package manifests
     schedule:
       interval: "weekly"
-  - package-ecosystem: "github-actions" # See documentation for possible values
+    groups:
+      python-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
     directory: "/" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      github-actions-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+  
+  - package-ecosystem: 'gomod'
+    directory: "infrastructure/bootstrap/tests/unit" # Location of package manifests
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
