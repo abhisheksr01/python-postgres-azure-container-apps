@@ -2,7 +2,7 @@ name: python-application-deployment
 
 env:
   AZURE_WEBAPP_NAME: python-postgres-azure
-  PYTHON_VERSION: "3.11"
+  PYTHON_VERSION: "3.13"
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python version
-        uses: actions/setup-python@v4.7.1
+        uses: actions/setup-python@v5.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python version
-        uses: actions/setup-python@v4.7.1
+        uses: actions/setup-python@v5.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -72,7 +72,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python version
-        uses: actions/setup-python@v4.7.1
+        uses: actions/setup-python@v5.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -108,7 +108,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python version
-        uses: actions/setup-python@v4.7.1
+        uses: actions/setup-python@v5.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -144,7 +144,7 @@ jobs:
         shell: bash
 
       - name: Set up Python version
-        uses: actions/setup-python@v4.7.1
+        uses: actions/setup-python@v5.1.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -192,7 +192,7 @@ jobs:
           docker push "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest"
       
       - name: Upload Next Tag Version
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tag-version
           path: tag-version.txt
@@ -204,11 +204,13 @@ jobs:
     defaults:
       run:
         working-directory: infrastructure/app-infra
+    environment:
+      name: approve-dev-deployment
     steps:
       - uses: actions/checkout@v4
 
       - name: Log in to Azure using OIDC
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZ_CLIENT_ID }}
           tenant-id: ${{ secrets.AZ_TENANT_ID }}
