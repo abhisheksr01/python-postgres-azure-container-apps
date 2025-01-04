@@ -20,8 +20,14 @@ permissions:
   id-token: write # This is required for requesting the JWT
 
 jobs:
-  check-conventional-commits:
-    uses: cocogitto/cocogitto-action@v3
+  conventional-commit-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Conventional commit check
+        uses: cocogitto/cocogitto-action@v3
 
   linting:
     runs-on: ubuntu-latest
@@ -44,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - linting
-      - check-conventional-commits
+      - conventional-commit-check
     steps:
       - uses: actions/checkout@v4
 
@@ -67,7 +73,7 @@ jobs:
         working-directory: rates
     needs:
       - linting
-      - check-conventional-commits
+      - conventional-commit-check
     steps:
       - uses: actions/checkout@v4
 
@@ -87,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - linting
-      - check-conventional-commits
+      - conventional-commit-check
     steps:
       - name: Placeholder for unit test
         run: |
@@ -97,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - linting
-      - check-conventional-commits
+      - conventional-commit-check
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -166,7 +172,7 @@ jobs:
 
       - id: bump-version
         name: Bump to Next Semver Version
-        uses: armakuni/github-actions/bump-version@v0.14.11
+        uses: armakuni/github-actions/bump-version@v0.19.4
 
       - name: Build Docker Image
         run: |
@@ -346,7 +352,7 @@ jobs:
     needs:
       - placeholder-prod-deploy-to-az-container-apps
     if: github.ref == 'refs/heads/main'
-    uses: armakuni/github-actions/.github/workflows/tag-and-release.yml@v0.14.10
+    uses: armakuni/github-actions/.github/workflows/tag-and-release.yml@v0.19.4
     secrets: inherit
     with:
       download-artifacts: true
