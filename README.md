@@ -8,7 +8,7 @@ This repository contains solutions to two distinct tasks:
 The codebase can be better visualized as below:
 
 ![Visualization of the codebase](./diagram.svg)
-   
+
 # Table of Content
 
 - [Python Postgres Azure Flask Application](#python-postgres-azure-flask-application)
@@ -19,13 +19,18 @@ The codebase can be better visualized as below:
     - [Development](#development)
     - [DevSecOps Toolings](#devsecops-toolings)
   - [Running the API Service and DB locally](#running-the-api-service-and-db-locally)
+      - [Running the database](#running-the-database)
+      - [Running the API service](#running-the-api-service)
+        - [Install prerequisites](#install-prerequisites)
+        - [Run the application](#run-the-application)
+        - [Test the application](#test-the-application)
   - [Infrastructure as Code](#infrastructure-as-code)
-    - [Bootstrap Infrastructure - `/infrastructure/bootstrap`:](#bootstrap-infrastructure---infrastructurebootstrap)
+    - [Bootstrap Infrastructure - `/infrastructure/bootstrap`](#bootstrap-infrastructure---infrastructurebootstrap)
       - [**Chicken and Egg Paradox**](#chicken-and-egg-paradox)
-    - [Application-Infrastructure `/infrastructure/app-infra`:](#application-infrastructure-infrastructureapp-infra)
+    - [Application-Infrastructure `/infrastructure/app-infra`](#application-infrastructure-infrastructureapp-infra)
   - [CI/CD - Github Actions](#cicd---github-actions)
 - [Theoretical Case: Secure Database Access](#theoretical-case-secure-database-access)
-    - [Secure Access Requirements:](#secure-access-requirements)
+    - [Secure Access Requirements](#secure-access-requirements)
     - [Solution](#solution)
 - [Assumptions](#assumptions)
 - [ToDo](#todo)
@@ -36,6 +41,7 @@ The codebase can be better visualized as below:
   - [Networking/Security](#networkingsecurity)
 
 # Python Flask API
+
 ## Premise
 
 In this section, we will cover a practical solution for setting up a deployable production environment for a simplified application. This environment consists of a API service deployed on Azure Cloud. The goal is to automate the setup of this production environment using "infrastructure as code" principles. Below are the steps to achieve this:
@@ -45,6 +51,7 @@ In this section, we will cover a practical solution for setting up a deployable 
 > Note: The solution development was conducted on a MacBook M1. Therefore, the instructions are tailored for use in a macOS environment or a similar development environment.
 
 Before we get started ensure you have below tools setup:
+
 ### Development
 
 - *Python v3.11* - For developing the Flask API application.
@@ -69,20 +76,25 @@ All the tools we have used so far are Free to use for personal usage.
 - *Bandit* - A python lib for static code analysis.
 - *Safety* - A python lib for dependency vulnerability analysis.
 - *Checkov* - IAC vulnerability scanning tool, we have used it for scanning our Dockerfile.
-- *trivy* - For scanning vulnerabilities in docker image even before pushing it to the registry. 
+- *trivy* - For scanning vulnerabilities in docker image even before pushing it to the registry.
 - *Owasp Zap* - PenTest
 - Github Secret Scanning
 - *Dependabot and Mergify* - Dependabot bumps the dependencies by creating a PR. This helps us keep our dependencies up to date and avoid vulnerabilities. We also use Mergify to streamline the PR merging process, automating it when all the necessary checks and criteria are satisfied.
+
 ## Running the API Service and DB locally
+
 1. Start Docker Desktop
 2. From the root directory of this repository execute below command:
+
     ```bash
     make start-app-db
     ```
+
     The above command uses docker compose to run containerized instance of our API and `postgres-13.5` database and then uploads the mock data into the postgres database.
 
 3. Test the application by making API requests. For example:
    - GET - Greeting API (Health check)
+
       ```bash
       curl http://127.0.0.1:3000
       ```
@@ -90,12 +102,15 @@ All the tools we have used so far are Free to use for personal usage.
       ```json
       {"message":"Hello world!"}
       ```
+
    - GET - Rates API
+
       ```bash
       curl "http://127.0.0.1:3000/rates?date_from=2021-01-01&date_to=2021-01-31&orig_code=CNGGZ&dest_code=EETLL"
       ```
 
       The output should be something like this:
+
        ```json
        {
           "rates" : [
@@ -113,71 +128,79 @@ All the tools we have used so far are Free to use for personal usage.
           ]
        }
        ```
+
 4. Stop the application
+
    ```bash
    make stop-app-db
    ```
+
 5. Check all available options
+
    ```bash
    make help
    ```
+
     </details>
     <details>
     <summary>Click here to check the local execution steps</summary>
-    
-    #### Running the database
+
+   #### Running the database
 
     There’s an SQL dump in `db/rates.sql` that needs to be loaded into a PostgreSQL 13.5 database.
-    
+
     After installing the database, the data can be imported through:
-    
+
     ```bash
     createdb rates
     psql -h localhost -U postgres < db/rates.sql
     ```
-    
+
     You can verify that the database is running through:
-    
+
     ```bash
     psql -h localhost -U postgres -c "SELECT 'alive'"
     ```
-    
+
     The output should be something like:
-    
+
     ```bash
      ?column?
     ----------
      alive
     (1 row)
     ```
-    
-    #### Running the API service
-    
+
+   #### Running the API service
+
     Start from the `rates` folder.
-    
-    ##### Install prerequisites
-    
+
+   ##### Install prerequisites
+
     ```
     DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y python3-pip
     pip install -U gunicorn
     pip3 install -Ur requirements.txt
     ```
-    
-    ##### Run the application
+
+   ##### Run the application
+
     ```
     gunicorn -b :3000 wsgi
     ```
-    
+
     The API should now be running on [http://localhost:3000](http://localhost:3000).
-    
-    ##### Test the application
-    
+
+   ##### Test the application
+
     Get average rates between ports:
+
     ```
     curl "http://127.0.0.1:3000/rates?date_from=2021-01-01&date_to=2021-01-31&orig_code=CNGGZ&dest_code=EETLL"
     ```
-    
+
     The output should be something like this:
+
     ```json
     {
        "rates" : [
@@ -195,15 +218,16 @@ All the tools we have used so far are Free to use for personal usage.
        ]
     }
     ```
+
     </details>
 
 ## Infrastructure as Code
-The solution uses Terraform (infrastructure as code components) that allow you to deploy this environment on cloud providers such as Azure.
 
+The solution uses Terraform (infrastructure as code components) that allow you to deploy this environment on cloud providers such as Azure.
 
 We have 2 logical segregation of the terraform code as below:
 
-### Bootstrap Infrastructure - `/infrastructure/bootstrap`:
+### Bootstrap Infrastructure - `/infrastructure/bootstrap`
 
 Bootstrap Infrastructure refers to the essential infrastructure resources that are necessary during the initial provisioning phase and ideally remains unchanged or require infrequent modifications.
 
@@ -241,25 +265,31 @@ Follow below steps for provisioning bootstrap infrastructure:
    ```
 
 - From the terminal change the directory
+
    ```bash
    cd infrastructure/bootstrap
    ```
+
 - Comment terraform backend config `backend "azurerm" {}` is commented in `infrastructure\bootstrap\main.tf`
 
 - Initialize Terraform for dev environment
+
    ```bash
    terraform init -var-file=./dev/terraform.tfvars
    ```
 
 - Plan the Terraform changes and review
+
    ```bash
    terraform plan -var-file=./dev/terraform.tfvars
    ```
 
 - Apply changes after its reviewed
+
    ```bash
    terraform init -var-file=./dev/terraform.tfvars
    ```
+
 - Re Initialize Terraform to use a remote backend
 
    Uncomment `# backend "azurerm" {}`
@@ -269,6 +299,7 @@ Follow below steps for provisioning bootstrap infrastructure:
    ```bash
    terraform init -backend-config=./dev/backend-config.hcl -var-file=./dev/terraform.tfvars
    ```
+
    Once successfully executed the local `terraform.state` file has been securely  stored in the Azure Storage Account.
 
 - Repeat the steps for other environments.
@@ -277,7 +308,7 @@ We have configured a `bootstrap-infrastructure` Github Actions Pipeline to autom
   
 </details>
 
-### Application-Infrastructure `/infrastructure/app-infra`:
+### Application-Infrastructure `/infrastructure/app-infra`
 
 Contains terraform code for provisioning Azure VNet, VNet associated infrastructure components and Azure Container Apps for deploying a simple containerized application.
 
@@ -322,7 +353,9 @@ app_container_config={
 </details>
 
 ## CI/CD - Github Actions
+
 We use Github Actions for automating below operations:
+
 - Provisioning our Azure Infrastructure in all the environments with all the quality and security gates
 - Deploying the Python Flask API in all the environments with all the quality and security gates
 - Testing Dependabot and other PR's and automatically merging once all the success criteria are met
@@ -331,18 +364,20 @@ We use Github Actions for automating below operations:
 
 We are using `Github-OIDC` for securing the connectivity between the Github Actions and Azure Cloud thus reducing the risk of compromising the credentials. Once the service principal is provisioned by the bootstrap infrastructure you must configure them in the github repository under `Settings > Secrets and Variables > Actions > New Repository Secret`
 
-![](./github-secrets.png)
+![](docs/images/github-secrets.png)
 
 Python Application Pipeline:
-![](/app-pipeline.png)
+![](docs/images/app-pipeline.png)
 
 Infrastructure Pipeline:
-![](./infra-pipeline.png)
+![](docs/images/infra-pipeline.png)
 
 # Theoretical Case: Secure Database Access
 
-### Secure Access Requirements:
+### Secure Access Requirements
+
 Secure Access to the Postgres Database deployed on Azure Cloud requires:
+
 - End-to-end auditing capabilities for any operation performed.
 - An automated solution for rotating the database credentials every X number of days and workflow capabilities for user management and manual approval/reviews before an action being taken.
 - The solution should provide zero downtime for the application.
@@ -361,9 +396,10 @@ We would like to use below components of the Azure Cloud for implementing the so
 
 The solution can be visualized with the help of below request flow diagram:
 
-![](db-secure-access-explained.jpg)
+![](docs/images/db-secure-access-explained.jpg)
   
 # Assumptions
+
 - The API needs to be publicly accessible.
 - The intendant audience has decent understanding of Azure Cloud, Github Actions, Terraform, Docker.
 - They are using Macbook or similar development environment.
@@ -371,15 +407,19 @@ The solution can be visualized with the help of below request flow diagram:
 # ToDo
 
 Below is the list of the things we must do to make the implementation production ready.
+
 ## Documentation
+
 - Add Links to the official documentations.
   
 ## App Code
+
 - Migrate from Pip to modern package managers like `Pipenv` or `Poetry` for better dependency management.
-- Implement Unit Test and E2E test appropriately to adhere `Test Pyramid strategy` thus maturing testing strategy. 
+- Implement Unit Test and E2E test appropriately to adhere `Test Pyramid strategy` thus maturing testing strategy.
 - Tagging Strategy: Currently we are using job id for tagging docker images which remains unique across the pipeline execution. A preferred approach would be to use `semver` for versioning the images and API.
 
 ## IAC
+
 - Use `Terratest` for Integration test.
 - Implement `Smoke/E2E` testing for IAC once the Infrastructure is provisioned. Execute on a scheduled event to detect any drift from the desired state defined as IAC.
 - Pass the plan artifact from plan to apply. Terraform best practice.
@@ -387,6 +427,7 @@ Below is the list of the things we must do to make the implementation production
 - Analyze the pros and cons of Splitting the AZ Container Apps Environment provisioning through TF and AZ Container App deployment with configuration through Github Actions and YML configs.
 
 ## CI/CD
+
 - Refactor Github Actions Pipeline code to reduce Boilerplate code and practice DRY.
 - Perform Pen Test after Dev Deployment.
 - Certain organization requires manual approval step before `Prod` deployment and creation of a `Change Request` for auditing purposes.
@@ -394,6 +435,7 @@ Thus it should be implemented for the application and infrastructure deployments
 - Automate `Chaos Testing` using Simian Army for testing Disaster Recovery strategy.
 
 ## Networking/Security
+
 - Restrict Ingress and Egress to the API.
 - Integrate Web Application Firewall.
 - Integrate API Gateway and API Management with the AZ Container Apps. Use appropriate Authentication and Authorization mechanism to protect the API.
