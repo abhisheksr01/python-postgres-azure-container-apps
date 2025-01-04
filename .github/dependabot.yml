@@ -9,6 +9,9 @@ updates:
     directory: "/rates" # Location of package manifests
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: build
+      include: scope
     groups:
       python-dependencies:
         applies-to: version-updates
@@ -19,6 +22,9 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: ci
+      include: scope
     groups:
       github-actions-dependencies:
         applies-to: version-updates
