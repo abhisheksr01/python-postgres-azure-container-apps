@@ -54,7 +54,7 @@ Before we get started ensure you have below tools setup:
 
 ### Development
 
-- *Python v3.11* - For developing the Flask API application.
+- *Python v3.13* - For developing the Flask API application.
 - *Terraform v1.5.7* - Leading Infrastructure as Code framework for building Cloud & On-Prem Infrastructure.
 - *GoLang go v1.21.1 (Optional)* - We are using `Terratest` for testing our TF Code. So only if you wish to write or run tests then you would require it.
 - *Docker Desktop* - Used for containerizing and testing the application locally.

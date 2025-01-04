@@ -2,7 +2,7 @@ name: python-application-pr
 
 env:
   AZURE_WEBAPP_NAME: python-postgres-azure
-  PYTHON_VERSION: "3.11"
+  PYTHON_VERSION: "3.13"
 
 on:
   pull_request:
