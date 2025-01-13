@@ -172,7 +172,7 @@ jobs:
 
       - id: bump-version
         name: Bump to Next Semver Version
-        uses: armakuni/github-actions/bump-version@v0.19.4
+        uses: armakuni/github-actions/bump-version@v0.19.5
 
       - name: Build Docker Image
         run: |
@@ -352,7 +352,7 @@ jobs:
     needs:
       - placeholder-prod-deploy-to-az-container-apps
     if: github.ref == 'refs/heads/main'
-    uses: armakuni/github-actions/.github/workflows/tag-and-release.yml@v0.19.4
+    uses: armakuni/github-actions/.github/workflows/tag-and-release.yml@v0.19.5
     secrets: inherit
     with:
       download-artifacts: true
