@@ -94,7 +94,7 @@ jobs:
           subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
 
       - name: Set up Python version
-        uses: actions/setup-python@v5.3.0
+        uses: actions/setup-python@v5.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
