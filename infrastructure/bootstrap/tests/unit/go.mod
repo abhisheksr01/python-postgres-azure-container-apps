@@ -1,11 +1,12 @@
 module github.com/abhisheksr01/python-postgres-azure
 
-go 1.21.1
+go 1.23.0
+
 toolchain go1.24.1
 
 require (
 	github.com/armakuni/go-terratest-helper v0.3.20
-	github.com/gruntwork-io/terratest v0.48.2
+	github.com/gruntwork-io/terratest v0.49.0
 	github.com/stretchr/testify v1.10.0
 )
 
