@@ -19,7 +19,7 @@ jobs:
   conventional-commit-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Conventional commit check
@@ -34,7 +34,7 @@ jobs:
         working-directory: infrastructure/bootstrap
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Log in to Azure using OIDC
         uses: azure/login@v2
@@ -84,7 +84,7 @@ jobs:
       run:
         working-directory: infrastructure/bootstrap
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Log in to Azure using OIDC
         uses: azure/login@v2
@@ -94,7 +94,7 @@ jobs:
           subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
 
       - name: Set up Python version
-        uses: actions/setup-python@v5.5.0
+        uses: actions/setup-python@v5.6.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -137,7 +137,7 @@ jobs:
       run:
         working-directory: infrastructure/bootstrap
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install TFSec
         run: |
@@ -147,7 +147,7 @@ jobs:
         run: tfsec .
 
       - name: Install TFLint
-        uses: terraform-linters/setup-tflint@v4
+        uses: terraform-linters/setup-tflint@v5
         with:
           tflint_version: latest
 
@@ -183,7 +183,7 @@ jobs:
       run:
         working-directory: infrastructure/bootstrap
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Log in to Azure using OIDC
         uses: azure/login@v2
@@ -222,7 +222,7 @@ jobs:
       run:
         working-directory: infrastructure/bootstrap
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Log in to Azure using OIDC
         uses: azure/login@v2
