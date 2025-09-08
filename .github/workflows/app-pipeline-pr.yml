@@ -15,7 +15,7 @@ jobs:
   conventional-commit-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Conventional commit check
@@ -26,10 +26,10 @@ jobs:
     needs:
       - conventional-commit-check
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Python version
-        uses: actions/setup-python@v5.5.0
+        uses: actions/setup-python@v6.0.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -45,10 +45,10 @@ jobs:
     needs:
       - linting-pr
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Python version
-        uses: actions/setup-python@v5.5.0
+        uses: actions/setup-python@v6.0.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -67,10 +67,10 @@ jobs:
     needs:
       - linting-pr
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Python version
-        uses: actions/setup-python@v5.5.0
+        uses: actions/setup-python@v6.0.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
@@ -92,10 +92,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Python version
-        uses: actions/setup-python@v5.5.0
+        uses: actions/setup-python@v6.0.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
